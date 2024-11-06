@@ -38,7 +38,4 @@ float getAirlevel();
 
 
 // SET TASK FOR GET DATA SENSOR
-
-
-
 #endif
