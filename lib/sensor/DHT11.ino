@@ -10,8 +10,8 @@
 #define FIREBASE_HOST "smarthomeiot-7740b-default-rtdb.firebaseio.com"  
 #define FIREBASE_AUTH "RdvTiJl8Wm51jDdu1WJasH9qKTSVFkIhsWAodXtr"
 
-FirebaseData firebaseData
-String path = "/"
+FirebaseData firebaseData;
+String path = "/";
 FirebaseJson json;
 FirebaseJsonData jsondata;
 
