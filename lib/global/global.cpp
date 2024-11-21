@@ -9,6 +9,14 @@ float homeTemperature = 0;
 float homeHumidity = 0;
 float homeLightlevel = 0;
 float homeAirlevel = 0;
+bool changeRelayStatus = false;
+uint8_t relayStatus[MAX_RELAY]= {0,0,0,0};
+
+bool buttonState1 = 0;
+bool buttonState2 = 0;
+bool buttonState3 = 0;
+bool buttonState4 = 0;
+
 
 //Define Firebase Data object
 FirebaseData fbdo; 
@@ -53,7 +61,7 @@ void homeUpdateDataTask(void *parameters){
         if(homeLightlevel !=getLightlevel() ){homeLightlevel = getLightlevel() ;}
         if(homeAirlevel !=getAirlevel() ){homeAirlevel = getAirlevel() ;}
         //END UPDATE DATA
-        vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay for 200ms
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
 
@@ -63,7 +71,7 @@ void setupHomeUpdateData(){
         "Home update", // Name of the task 
         1500, // Stack size 
         NULL, // Task input parameter 
-        1, // Priority of the task 
+        2, // Priority of the task 
         NULL // Task handle 
     );
 }
@@ -84,11 +92,16 @@ void databaseTask(void *parameters) {
             if (Firebase.RTDB.setFloat(&fbdo, "Home/homeAirlevel", homeAirlevel)) {
                 Serial.println("Air level updated");
             }
+            if(changeRelayStatus){
+                if (Firebase.RTDB.setString(&fbdo, "Relay/Relay1", "OFF"))
+                
+                changeRelayStatus = 0;
+            }
         }
     UBaseType_t uxHighWaterMark = uxTaskGetStackHighWaterMark(NULL); 
     Serial.print("Stack high water mark: "); 
     Serial.println(uxHighWaterMark);
-        vTaskDelay(10000 / portTICK_PERIOD_MS); // Delay for 5000ms
+        vTaskDelay(10000 / portTICK_PERIOD_MS);
     }
 }
 
@@ -138,21 +151,95 @@ WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 void setupRelay()
 {
     pinMode(relay1, OUTPUT);
-    pinMode(relay2, OUTPUT);
-    pinMode(relay3, OUTPUT);
-    pinMode(relay4, OUTPUT);
     digitalWrite(relay1, HIGH);
+    pinMode(relay2, OUTPUT);
     digitalWrite(relay2, HIGH);
+    pinMode(relay3, OUTPUT);
     digitalWrite(relay3, HIGH);
-    digitalWrite(relay4, HIGH);
+    pinMode(relay4, OUTPUT);
+    digitalWrite(relay4, HIGH); 
 }
 
-void turnOnRelay(int relay)
+void toggleRelay(int relay)
 {
-    digitalWrite(relay, LOW);
+    switch (relay)
+    {
+    case relay1:{
+        if (relayStatus[0] == 1){
+            relayStatus[0] = 0;
+            Serial.println("HEAR OFF");
+            digitalWrite(relay1, HIGH);        
+        }
+        else{
+            relayStatus[0] = 1;
+            digitalWrite(relay1, LOW); 
+            Serial.println("HEAR ON");     
+        }
+        break;
+        }
+    case relay2:{
+        if (relayStatus[1] == 1 ){
+            relayStatus[1] = 0;
+            digitalWrite(relay2, HIGH); 
+            
+        }
+        else{
+            relayStatus[1] = 1;
+            digitalWrite(relay2, LOW);     
+        }
+        break;
+        }
+    case relay3:{
+        if (relayStatus[2] == 1){
+            relayStatus[2] = 0;
+            digitalWrite(relay3, HIGH); 
+            
+        }
+        else{
+            digitalWrite(relay3, LOW); 
+            relayStatus[2] = 1;
+        }
+        break;
+    }
+    case relay4:{
+        if (relayStatus[3] == 1){
+            relayStatus[3] = 0;
+            digitalWrite(relay4, HIGH); 
+            
+        }
+        else{
+             relayStatus[3] = 1;
+            digitalWrite(relay4, LOW); 
+        }
+        break;
+    }  
+    } 
 }
 
-void turnOFFRelay(int relay)
+
+
+void setupButton()
 {
-    digitalWrite(relay, HIGH);
+    pinMode(button1, INPUT_PULLUP);
+    pinMode(button2, INPUT_PULLUP);
+    pinMode(button3, INPUT_PULLUP);
+    pinMode(button4, INPUT_PULLUP);
+}
+
+void readButtonTask(void *parameters){ 
+    while (1) {
+        getKeyInput();
+        vTaskDelay(10 / portTICK_PERIOD_MS); // Delay for 10ms
+    }
+}
+
+void setupReadButton(){ 
+    xTaskCreate( 
+        readButtonTask, // Task function 
+        "Read Button", // Name of the task 
+        2000, // Stack size 
+        NULL, // Task input parameter 
+        1, // Priority of the task 
+        NULL // Task handle 
+    );
 }
