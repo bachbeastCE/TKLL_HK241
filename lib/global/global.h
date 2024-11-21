@@ -14,6 +14,10 @@
 #define SDA_Pin 21
 #define dht_signal_Pin 23
 #define mq135_analog_Pin 35
+#define relay1 27
+#define relay2 26
+#define relay3 25
+#define relay4 33
 //VARIABLE
 
 extern float homeTemperature;
@@ -26,6 +30,11 @@ float getHomeTemperature();
 float getHomeHumidity();
 float getHomeLightlevel();
 float getHomeAirlevel();
+
+void setupRelay();
+void turnOnRelay(int relay);
+void turnOFFRelay(int relay);
+
 
 // SETUP FUNCTION
 void setupWifi();

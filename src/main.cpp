@@ -17,10 +17,12 @@ void setup()
   setupDHT();
   setupBH1750();
   setupMQ135();
+  setupRelay();
   setupHomeUpdateData();
 }
 
 void loop()
 {
+  turnOnRelay(relay1);
   displayLCD();
 }
