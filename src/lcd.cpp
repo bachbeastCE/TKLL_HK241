@@ -47,7 +47,6 @@ void displayLCD(){
       lcd.print("Light: "); lcd.print(tmp_lightlevel);lcd.print(" lux");
       lcd.setCursor(0, 3);
       lcd.print("Air: "); lcd.print(tmp_airlevel);lcd.print(" ppm");
-      delay(1000);
       lcd.clear();
     //}
         break;

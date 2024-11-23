@@ -14,7 +14,7 @@ void setupDHT(){
     xTaskCreate( 
         DHTTask, // Task function 
         "DHT Task", // Name of the task 
-        1000, // Stack size 
+        2000, // Stack size 
         NULL, // Task input parameter 
         10, // Priority of the task 
         NULL // Task handle 
@@ -36,7 +36,7 @@ void DHTTask(void *parameters){
             Serial.print("Temperature: "); 
             Serial.print(temperature); 
             Serial.println(" °C"); } 
-            vTaskDelay(5000 / portTICK_PERIOD_MS); // Delay for 1 minute 
+            vTaskDelay(10000 / portTICK_PERIOD_MS); 
         } 
 }
 
@@ -83,24 +83,23 @@ void BH1750Task(void *pvParameters) {
             Serial.println(F("error"));
         }
 
-        Serial.print(F("Power for 555nm wave: "));
-        if (lightlevel != BH1750_ERROR) {  // BH1750_ERROR=4294967295
-            Serial.print((lightlevel / 683), 2);
-            Serial.println(F(" Watt/m^2"));
-        } else {
-            Serial.println(F("error"));
-        }
+        // Serial.print(F("Power for 555nm wave: "));
+        // if (lightlevel != BH1750_ERROR) {  // BH1750_ERROR=4294967295
+        //     Serial.print((lightlevel / 683), 2);
+        //     Serial.println(F(" Watt/m^2"));
+        // } else {
+        //     Serial.println(F("error"));
+        // }
+        // Serial.print(F("Resolution value....: 0x"));
+        // Serial.println(lightMeter.getResolution(), HEX);  // Print the current resolution
 
-        Serial.print(F("Resolution value....: 0x"));
-        Serial.println(lightMeter.getResolution(), HEX);  // Print the current resolution
+        // Serial.print(F("Calibration value...: "));
+        // Serial.println(lightMeter.getCalibration());  // Print the current calibration
 
-        Serial.print(F("Calibration value...: "));
-        Serial.println(lightMeter.getCalibration());  // Print the current calibration
+        // Serial.print(F("Sensitivity value...: "));
+        // Serial.println(lightMeter.getSensitivity());  // Print the current sensitivity
 
-        Serial.print(F("Sensitivity value...: "));
-        Serial.println(lightMeter.getSensitivity());  // Print the current sensitivity
-
-        vTaskDelay(100 / portTICK_PERIOD_MS);  // Delay for 100 ms
+        vTaskDelay(1000 / portTICK_PERIOD_MS);  // Delay for 200 ms
     }
 }
 
@@ -115,7 +114,7 @@ void setupMQ135(){
         "MQ135 Task", // Name of the task 
         2000, // Stack size 
         NULL, // Task input parameter 
-        9, // Priority of the task 
+        10, // Priority of the task 
         NULL // Task handle 
     );
 }
@@ -126,7 +125,7 @@ void MQ135Task(void *pvParameters){
         Serial.print("Air level: ");
         Serial.print(airlevel);
         Serial.println(" ppm");
-        vTaskDelay(5000 / portTICK_PERIOD_MS); // Delay for 1 minute 
+        vTaskDelay(10000 / portTICK_PERIOD_MS);
     }
 }
 

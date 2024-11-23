@@ -5,6 +5,7 @@
 #include <Arduino.h>
 #include <sensor_module.h>
 #include <button.h>
+#include <lcd.h>
 
 #define WIFI_SSID "Duy Bach"
 #define WIFI_PASSWORD "28082004"
@@ -13,8 +14,8 @@
 //DEFINE GPIO PIN
 #define SCL_Pin 22
 #define SDA_Pin 21
-#define dht_signal_Pin 33
-#define mq135_analog_Pin 32
+#define dht_signal_Pin 23
+#define mq135_analog_Pin 35
 
 #define ON 1
 #define OFF 0
@@ -39,7 +40,6 @@ extern float homeTemperature;
 extern float homeHumidity;
 extern float homeLightlevel;
 extern float homeAirlevel;
-extern bool changeRelayStatus;
 extern uint8_t relayStatus[MAX_RELAY];
 
 
@@ -49,12 +49,14 @@ float getHomeHumidity();
 float getHomeLightlevel();
 float getHomeAirlevel();
 
-void setupRelay();
+
 void toggleRelay(int relay);
 
-void setupButton();
+
 
 // SETUP FUNCTION
+void setupRelay();
+void setupButton();
 void setupWifi();
 void homeUpdateDataTask(void *parameters);
 void setupHomeUpdateData();
@@ -62,5 +64,6 @@ void databaseTask(void *parameters);
 void setupDatabase();
 void readButtonTask(void *parameters);
 void setupReadButton();
-
+void updateRelayTask(void *parameters);
+void setupuUpdateRelay();
 #endif
