@@ -4,7 +4,6 @@
 #include <addons/TokenHelper.h>
 #include <addons/RTDBHelper.h>
 
-
 float homeTemperature = 0;
 float homeHumidity = 0;
 float homeLightlevel = 0;
@@ -243,13 +242,50 @@ void setupReadButton(){
     );
 }
 
+void button_change_relay()
+{
+   for(int i =0;i< MAX_BUTTON;i++){
+      if(button_flag[i]){
+            (homeDevice[i].getStatus()=="OFF")?(homeDevice[i].turnON()):(homeDevice[i].turnOFF());
+            char tmp[50]= "Device/";
+            strcat(tmp,homeDevice[i].getName().c_str());
+            Firebase.RTDB.setString(&fbdo,tmp,homeDevice[i].getStatus() );
+      }
+   }
+};
+
+void database_change_relay()
+{
+    for(int i =0;i< MAX_RELAY;i++){
+        char tmp[50]= "/Device/";
+        strcat(tmp,homeDevice[i].getName().c_str());
+        if(Firebase.RTDB.getString(&fbdo, tmp) && fbdo.dataType() == "String"){
+            (fbdo.stringData()== "OFF")?(homeDevice[i].turnOFF()):(homeDevice[i].turnON());
+        }
+   }
+};
+
+void updateRelay(void *parameters){ 
+    while (1) {
+        database_change_relay();
+        button_change_relay();
+        // if(changeRelayStatus[0] && Firebase.RTDB.setString(&fbdo, "Relay/Relay1", relayStatus[0]))changeRelayStatus[0]= false;
+        // if(changeRelayStatus[1] && Firebase.RTDB.setString(&fbdo, "Relay/Relay2", relayStatus[1]))changeRelayStatus[1]= false;  
+        // if(changeRelayStatus[2] && Firebase.RTDB.setString(&fbdo, "Relay/Relay3", relayStatus[2]))changeRelayStatus[2]= false;
+        // if(changeRelayStatus[3] && Firebase.RTDB.setString(&fbdo, "Relay/Relay4", relayStatus[3]))changeRelayStatus[3]= false;
+        vTaskDelay(10 / portTICK_PERIOD_MS); 
+    }
+}
+
+
 void updateRelayTask(void *parameters){ 
     while (1) {
-        if(changeRelayStatus[0] && Firebase.RTDB.setString(&fbdo, "Relay/Relay1", relayStatus[0]))changeRelayStatus[0]= false;
-        if(changeRelayStatus[1] && Firebase.RTDB.setString(&fbdo, "Relay/Relay2", relayStatus[1]))changeRelayStatus[1]= false;  
-        if(changeRelayStatus[2] && Firebase.RTDB.setString(&fbdo, "Relay/Relay3", relayStatus[2]))changeRelayStatus[2]= false;
-        if(changeRelayStatus[3] && Firebase.RTDB.setString(&fbdo, "Relay/Relay4", relayStatus[3]))changeRelayStatus[3]= false;
-        vTaskDelay(2000 / portTICK_PERIOD_MS); 
+        button_change_relay();
+        // if(changeRelayStatus[0] && Firebase.RTDB.setString(&fbdo, "Relay/Relay1", relayStatus[0]))changeRelayStatus[0]= false;
+        // if(changeRelayStatus[1] && Firebase.RTDB.setString(&fbdo, "Relay/Relay2", relayStatus[1]))changeRelayStatus[1]= false;  
+        // if(changeRelayStatus[2] && Firebase.RTDB.setString(&fbdo, "Relay/Relay3", relayStatus[2]))changeRelayStatus[2]= false;
+        // if(changeRelayStatus[3] && Firebase.RTDB.setString(&fbdo, "Relay/Relay4", relayStatus[3]))changeRelayStatus[3]= false;
+        vTaskDelay(10 / portTICK_PERIOD_MS); 
     }
 }
 

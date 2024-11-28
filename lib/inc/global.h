@@ -6,6 +6,9 @@
 #include <sensor_module.h>
 #include <button.h>
 #include <lcd.h>
+#include <device.h>
+#include <string.h>
+using namespace std;
 
 #define WIFI_SSID "Duy Bach"
 #define WIFI_PASSWORD "28082004"
@@ -17,16 +20,15 @@
 #define dht_signal_Pin 23
 #define mq135_analog_Pin 35
 
-#define ON 1
-#define OFF 0
-
-#define MAX_RELAY 4
 #define relay1 25
 #define relay2 26
 #define relay3 27
 #define relay4 14
 
+#define motor1 200
+
 #define MAX_BUTTON 4
+#define MAX_RELAY 4
 #define button1 17
 #define button2 5
 #define button3 18
@@ -34,6 +36,9 @@
 
 
 //VARIABLE
+Device homeDevice[MAX_RELAY]={Device(relay1),Device(relay2),
+                                 Device(relay3),Device(relay4)};
+Motor motor(motor1);
 
 
 extern float homeTemperature;
@@ -48,10 +53,8 @@ float getHomeTemperature();
 float getHomeHumidity();
 float getHomeLightlevel();
 float getHomeAirlevel();
-
-
+void button_change_relay();
 void toggleRelay(int relay);
-
 
 
 // SETUP FUNCTION
