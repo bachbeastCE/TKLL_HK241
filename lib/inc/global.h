@@ -1,11 +1,16 @@
 #ifndef global_h
 #define global_h
 
+
+
+
 //LIBRARY INCLUDE
 #include <Arduino.h>
 #include <sensor_module.h>
 #include <button.h>
 #include <lcd.h>
+#include <string.h>
+#include <relay.h>
 
 #define WIFI_SSID "Duy Bach"
 #define WIFI_PASSWORD "28082004"
@@ -16,6 +21,7 @@
 #define SDA_Pin 21
 #define dht_signal_Pin 23
 #define mq135_analog_Pin 35
+#define fan_pin 100
 
 #define ON 1
 #define OFF 0
@@ -31,6 +37,8 @@
 #define button2 5
 #define button3 18
 #define button4 19
+
+//Device a(relay1);
 
 
 //VARIABLE
@@ -50,12 +58,7 @@ float getHomeLightlevel();
 float getHomeAirlevel();
 
 
-void toggleRelay(int relay);
-
-
-
 // SETUP FUNCTION
-void setupRelay();
 void setupButton();
 void setupWifi();
 void homeUpdateDataTask(void *parameters);
@@ -65,5 +68,25 @@ void setupDatabase();
 void readButtonTask(void *parameters);
 void setupReadButton();
 void updateRelayTask(void *parameters);
-void setupuUpdateRelay();
+void setupUpdateRelay();
+
+void globalTask(void *parameters);
+void setupglobalTask();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #endif

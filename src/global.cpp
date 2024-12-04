@@ -5,17 +5,30 @@
 #include <addons/RTDBHelper.h>
 
 
+//READ SENSOR VARIABLE 
 float homeTemperature = 0;
 float homeHumidity = 0;
 float homeLightlevel = 0;
 float homeAirlevel = 0;
-bool changeRelayStatus[MAX_RELAY] = {true,true,true,true};
+int count=15;
+//RELAY VARIABLE
+Relay relays[MAX_RELAY]={Relay(relay1),Relay(relay2),
+                            Relay(relay3),Relay(relay4)};
+uint8_t relayStatusFlag[MAX_RELAY]= {0,0,0,0};
 uint8_t relayStatus[MAX_RELAY]= {0,0,0,0};
 
-bool buttonState1 = 0;
-bool buttonState2 = 0;
-bool buttonState3 = 0;
-bool buttonState4 = 0;
+//PWM VARIABLE
+const int freq = 5000;
+const int resolution = 8;
+const int fanChanel= 0;
+
+void setupFAN(){
+    ledcSetup(fanChanel,freq,resolution);
+    ledcAttachPin(fan_pin,fanChanel);
+}
+
+
+
 
 
 //Define Firebase Data object
@@ -55,13 +68,12 @@ void setupWifi(){
 
 void homeUpdateDataTask(void *parameters){ 
     while (1) {
-        //UPDATE DATA HERE
-        if(homeTemperature != getTemperature()){homeTemperature = getTemperature();}
-        if(homeHumidity !=getHumidity() ){homeHumidity = getHumidity() ;}
-        if(homeLightlevel !=getLightlevel() ){homeLightlevel = getLightlevel() ;}
-        if(homeAirlevel !=getAirlevel() ){homeAirlevel = getAirlevel() ;}
+        homeLightlevel = getLightlevel() ;
+        homeHumidity = getHumidity() ;
+        homeTemperature = getTemperature();
+        homeAirlevel = getAirlevel() ;
         //END UPDATE DATA
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        vTaskDelay(2000 / portTICK_PERIOD_MS);
     }
 }
 
@@ -69,7 +81,7 @@ void setupHomeUpdateData(){
     xTaskCreate( 
         homeUpdateDataTask, // Task function 
         "Home update", // Name of the task 
-        1500, // Stack size 
+        2048, // Stack size 
         NULL, // Task input parameter 
         2, // Priority of the task 
         NULL // Task handle 
@@ -80,26 +92,51 @@ void databaseTask(void *parameters) {
     while (1) {
         // UPDATE DATA INTO DATABASE HERE
         if (Firebase.ready() && signupOK) {
-            if (Firebase.RTDB.setInt(&fbdo, "Home/homeTemperature", homeTemperature)) {
-                Serial.println("Temperature updated");
+            if (Firebase.RTDB.setInt(&fbdo, "Home/homeTemperature", homeTemperature)&& count==15) {
+                //Serial.println("Temperature updated");
             }
-            if (Firebase.RTDB.setFloat(&fbdo, "Home/homeHumidity", homeHumidity)) {
-                Serial.println("Humidity updated");
+            
+            if (Firebase.RTDB.setFloat(&fbdo, "Home/homeHumidity", homeHumidity) && count==15) {
+                //Serial.println("Humidity updated");
             }
             if (Firebase.RTDB.setFloat(&fbdo, "Home/homeLightlevel", homeLightlevel)) {
-                Serial.println("Light level updated");
+                //Serial.println("Light level updated");
             }
-            if (Firebase.RTDB.setFloat(&fbdo, "Home/homeAirlevel", homeAirlevel)) {
-                Serial.println("Air level updated");
+            if (Firebase.RTDB.setFloat(&fbdo, "Home/homeAirlevel", homeAirlevel)&& count==15) {
+                //Serial.println("Air level updated");
             }
         }
-    UBaseType_t uxHighWaterMark = uxTaskGetStackHighWaterMark(NULL); 
-    Serial.print("Stack high water mark: "); 
-    Serial.println(uxHighWaterMark);
-        vTaskDelay(10000 / portTICK_PERIOD_MS);
-    }
-}
 
+         // RECEIVE FROM DATABASE
+        for (int i = 0; i < MAX_RELAY; i++) {
+            char tmp[32];
+            snprintf(tmp, sizeof(tmp), "/Relay/Relay%d", i + 1);
+            if (Firebase.RTDB.getInt(&fbdo, tmp) && fbdo.dataType() == "int" && relays[i].changeflag != 1) {
+                int tmp1 = fbdo.intData();
+                if (tmp1 != relays[i].status) {
+                    relays[i].status = tmp1;
+                    (tmp1 == 0) ? (relays[i].turnRelayOFF()) : (relays[i].turnRelayON());
+                }
+            }
+        }  
+
+        // SEND TO DATABASE
+        for (uint8_t i = 0; i < MAX_RELAY; i++) {
+            if (relays[i].changeflag == 1) {
+                relays[i].changeflag = 0;
+                char tmp[32];
+                snprintf(tmp, sizeof(tmp), "/Relay/Relay%d", i + 1);
+                Firebase.RTDB.setInt(&fbdo, tmp, relays[i].status);
+            }   
+        }
+        UBaseType_t uxHighWaterMark = uxTaskGetStackHighWaterMark(NULL); 
+        Serial.print("Stack high water mark: "); 
+        Serial.println(uxHighWaterMark);
+        (count == 15)?(count=0):(count++);
+        vTaskDelay(2000 / portTICK_PERIOD_MS);
+    }
+
+}
 void setupDatabase() { 
 WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   Serial.print("Connecting to Wi-Fi");
@@ -136,86 +173,12 @@ WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
     xTaskCreate(
         databaseTask, // Task function 
         "Database", // Name of the task 
-        7500, // Stack size (increase from 2000 to 3000)
+        8192, // Stack size (increase from 2000 to 3000)
         NULL, // Task input parameter 
         2, // Priority of the task 
         NULL // Task handle 
     );
 }
-
-void setupRelay()
-{
-    pinMode(relay1, OUTPUT);
-    digitalWrite(relay1, HIGH);
-    pinMode(relay2, OUTPUT);
-    digitalWrite(relay2, HIGH);
-    pinMode(relay3, OUTPUT);
-    digitalWrite(relay3, HIGH);
-    pinMode(relay4, OUTPUT);
-    digitalWrite(relay4, HIGH); 
-}
-
-void toggleRelay(int relay)
-{
-    switch (relay)
-    {
-    case relay1:{
-        changeRelayStatus[0] = true ;
-        if (relayStatus[0] == 1){
-            relayStatus[0] = 0;
-            digitalWrite(relay1, HIGH);        
-        }
-        else{
-            relayStatus[0] = 1;
-            digitalWrite(relay1, LOW);    
-        }
-        
-        break;
-        }
-    case relay2:{
-        changeRelayStatus[1] = true ;
-        if (relayStatus[1] == 1 ){
-            relayStatus[1] = 0;
-            digitalWrite(relay2, HIGH); 
-            
-        }
-        else{
-            relayStatus[1] = 1;
-            digitalWrite(relay2, LOW);     
-        }
-        break;
-        }
-    case relay3:{
-        changeRelayStatus[2] = true ;
-        if (relayStatus[2] == 1){
-            relayStatus[2] = 0;
-            digitalWrite(relay3, HIGH); 
-            
-        }
-        else{
-            digitalWrite(relay3, LOW); 
-            relayStatus[2] = 1;
-        }
-         
-        break;
-    }
-    case relay4:{
-        changeRelayStatus[3] = true ;
-        if (relayStatus[3] == 1){
-            relayStatus[3] = 0;
-            digitalWrite(relay4, HIGH); 
-            
-        }
-        else{
-             relayStatus[3] = 1;
-            digitalWrite(relay4, LOW); 
-        }
-        break;
-    }  
-    }   
-}
-
-
 
 void setupButton()
 {
@@ -224,45 +187,60 @@ void setupButton()
     pinMode(button3, INPUT_PULLUP);
     pinMode(button4, INPUT_PULLUP);
 }
-
-void readButtonTask(void *parameters){ 
+void readButtonTask(void *parameters) { 
     while (1) {
-        getKeyInput();
-        vTaskDelay(10 / portTICK_PERIOD_MS); // Delay for 10ms
+        getKeyInput();  // Read and debounce button inputs
+        vTaskDelay(10 / portTICK_PERIOD_MS); // Run every 10ms
     }
 }
 
-void setupReadButton(){ 
-    xTaskCreate( 
-        readButtonTask, // Task function 
-        "Read Button", // Name of the task 
-        2000, // Stack size 
-        NULL, // Task input parameter 
-        1, // Priority of the task 
-        NULL // Task handle 
+void setupReadButton() { 
+    xTaskCreate(
+        readButtonTask, 
+        "Read Button", 
+        1024, 
+        NULL, 
+        3,  // Higher priority for button inputs
+        NULL
     );
 }
 
-void updateRelayTask(void *parameters){ 
+void updateRelayTask(void *parameters) { 
     while (1) {
-        if(changeRelayStatus[0] && Firebase.RTDB.setString(&fbdo, "Relay/Relay1", relayStatus[0]))changeRelayStatus[0]= false;
-        if(changeRelayStatus[1] && Firebase.RTDB.setString(&fbdo, "Relay/Relay2", relayStatus[1]))changeRelayStatus[1]= false;  
-        if(changeRelayStatus[2] && Firebase.RTDB.setString(&fbdo, "Relay/Relay3", relayStatus[2]))changeRelayStatus[2]= false;
-        if(changeRelayStatus[3] && Firebase.RTDB.setString(&fbdo, "Relay/Relay4", relayStatus[3]))changeRelayStatus[3]= false;
-        vTaskDelay(2000 / portTICK_PERIOD_MS); 
+       
     }
 }
 
-void setupuUpdateRelay(){ 
-    xTaskCreate( 
-        updateRelayTask, // Task function 
-        "Update Relay", // Name of the task 
-        4096, // Stack size 
-        NULL, // Task input parameter 
-        4, // Priority of the task 
-        NULL // Task handle 
+void setupUpdateRelay() { 
+    xTaskCreate(
+        updateRelayTask, 
+        "Update Relay", 
+        1024,  // Increased stack size for Firebase operations
+        NULL, 
+        2,  // Lower priority to avoid blocking other tasks
+        NULL
     );
 }
 
+void globalTask(void *parameters) {
+    while (1) {
+        for (uint8_t i = 0; i < MAX_RELAY; i++) {
+            if (isButtonPressed(i)) {
+                relays[i].toolgeRelay();  // Toggle relay state
+            }
+        }
+        vTaskDelay(100 / portTICK_PERIOD_MS);  // Run every 100ms
+    }
+}
 
+void setupglobalTask() {
+    xTaskCreate(
+        globalTask, 
+        "Global Task", 
+        1024, 
+        NULL, 
+        1,  // Lowest priority
+        NULL
+    );
+}
 

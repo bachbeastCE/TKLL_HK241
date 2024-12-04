@@ -14,31 +14,14 @@ void setup()
   setupDHT();
   setupBH1750();
   setupMQ135();
-  setupRelay();
   setupButton();
   setupReadButton();
   setupHomeUpdateData();
-  setupuUpdateRelay();
+  setupUpdateRelay();
+  setupglobalTask();
 }
 
 void loop()
 {
-        if(isButtonPressed(0)){
-        toggleRelay(relay1);
-            
-        }
-    
-        if(isButtonPressed(1)){
-            toggleRelay(relay2);
-            
-        }
-
-        if(isButtonPressed(2)){
-            toggleRelay(relay3);
-            
-        }
-  
-        if(isButtonPressed(3)){
-            toggleRelay(relay4);
-        }
+       
 }
