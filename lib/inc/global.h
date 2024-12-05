@@ -1,18 +1,12 @@
 #ifndef global_h
 #define global_h
 
-
-
-
 //LIBRARY INCLUDE
 #include <Arduino.h>
 #include <sensor_module.h>
 #include <button.h>
 #include <lcd.h>
 #include <relay.h>
-
-
-
 
 #define WIFI_SSID "Duy Bach"
 #define WIFI_PASSWORD "28082004"
@@ -71,41 +65,21 @@ extern int freq;
 extern int resolution ;
 extern int channel;
 
-
-extern float homeTemperature;
-extern float homeHumidity;
-extern float homeLightlevel;
-extern float homeAirlevel;
 extern uint8_t relayStatus[MAX_RELAY];
 
-
-// RETURN FUNCTION
-float getHomeTemperature();
-float getHomeHumidity();
-float getHomeLightlevel();
-float getHomeAirlevel();
-
-
 // SETUP FUNCTION
-
 void setupButton();
-void setupWifi();
-void homeUpdateDataTask(void *parameters);
-void setupHomeUpdateData();
-void databaseTask(void *parameters);
 void setupDatabase();
-void readButtonTask(void *parameters);
-void setupReadButton();
-void updateRelayTask(void *parameters);
-void setupUpdateRelay();
 void setupFAN();
-void setup_IR_Controll();
-void IR_Controll();
+void setup_IR_Control();
+void IR_Control();
 
-
-void globalTask(void *parameters);
-void setupglobalTask();
-
+// CONTROL FUCTION
+void update_temp_humd_air();
+void button_controll_relay();
+void update_light();
+void receive_data_from_database();
+void send_data_to_database();
 
 
 

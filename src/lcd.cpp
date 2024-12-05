@@ -35,10 +35,10 @@ void displayLCD(){
   }
   case HOME:{
     //if( tmp_temp != homeTemperature || tmp_humid !=homeHumidity){
-      tmp_temp= homeTemperature;
-      tmp_humid= homeHumidity;
-      tmp_lightlevel= homeLightlevel;
-      tmp_airlevel= homeAirlevel;
+      tmp_temp= getTemperature();
+      tmp_humid= getHumidity();
+      tmp_lightlevel= getLightlevel();
+      tmp_airlevel= getAirlevel();
       lcd.setCursor(0, 0);
       lcd.print("Temperature: "); lcd.print(tmp_temp);lcd.print("oC");
       lcd.setCursor(0, 1);

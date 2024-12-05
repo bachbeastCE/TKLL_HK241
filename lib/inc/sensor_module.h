@@ -21,21 +21,17 @@ extern float lightlevel;
 extern float airlevel;
 
 // IMPLEMENT FOR TEMPERATURE & HUMIDITY SENSOR
-void setupDHT();
-void DHTTask(void *pvParameters);
+void readTempHump();
 float getTemperature();
 float getHumidity();
 
 // IMPLEMENT FOR LIGHT SENSOR
 void setupBH1750();
-void BH1750Task(void *pvParameters);
+void readLight();
 float getLightlevel();
 
 // IMPLEMENT FOR AIR SENSOR
-void setupMQ135();
-void MQ135Task(void *pvParameters);
+void readAir();
 float getAirlevel();
 
-
-// SET TASK FOR GET DATA SENSOR
 #endif
