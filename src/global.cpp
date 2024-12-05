@@ -3,7 +3,7 @@
 #include <WiFi.h>
 #include <addons/TokenHelper.h>
 #include <addons/RTDBHelper.h>
-
+#include <IRremote.hpp>
 
 //READ SENSOR VARIABLE 
 float homeTemperature = 0;
@@ -17,14 +17,15 @@ Relay relays[MAX_RELAY]={Relay(relay1),Relay(relay2),
 uint8_t relayStatusFlag[MAX_RELAY]= {0,0,0,0};
 uint8_t relayStatus[MAX_RELAY]= {0,0,0,0};
 
-//PWM VARIABLE
-const int freq = 5000;
-const int resolution = 8;
-const int fanChanel= 0;
 
+//PWM VARIABLE
+int speed = 100;
+int freq = 5000;
+int resolution = 8;
+int channel= 0;
 void setupFAN(){
-    ledcSetup(fanChanel,freq,resolution);
-    ledcAttachPin(fan_pin,fanChanel);
+    ledcSetup(channel,freq,resolution);
+    ledcAttachPin(fan_pin,channel);
 }
 
 
@@ -36,6 +37,13 @@ FirebaseData fbdo;
 FirebaseConfig config; 
 FirebaseAuth auth; 
 bool signupOK = false;
+
+
+
+
+
+
+
 
 ////////// RETURN VARIABLE 
 float getHomeTemperature(){
@@ -66,6 +74,9 @@ void setupWifi(){
     Serial.println();
 }
 
+
+
+////////////////////////////////////////////////////////
 void homeUpdateDataTask(void *parameters){ 
     while (1) {
         homeLightlevel = getLightlevel() ;
@@ -87,6 +98,14 @@ void setupHomeUpdateData(){
         NULL // Task handle 
     );
 }
+
+
+
+
+
+
+////////////////////////////////////////////////////////
+
 
 void databaseTask(void *parameters) { 
     while (1) {
@@ -119,6 +138,14 @@ void databaseTask(void *parameters) {
                 }
             }
         }  
+
+        if (Firebase.RTDB.getInt(&fbdo, "/Fan/speed") && fbdo.dataType() == "int") {
+                int tmp1 = fbdo.intData();
+                if (tmp1 != speed) {
+                    speed = tmp1;
+                    ledcWrite(channel,(speed * 255) /100);
+                }
+            }
 
         // SEND TO DATABASE
         for (uint8_t i = 0; i < MAX_RELAY; i++) {
@@ -180,6 +207,9 @@ WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
     );
 }
 
+
+////////////////////////////////////////////////////////
+
 void setupButton()
 {
     pinMode(button1, INPUT_PULLUP);
@@ -205,6 +235,14 @@ void setupReadButton() {
     );
 }
 
+////////////////////////////////////////////////////////
+
+
+
+
+
+
+
 void updateRelayTask(void *parameters) { 
     while (1) {
        
@@ -222,6 +260,51 @@ void setupUpdateRelay() {
     );
 }
 
+
+////////////////////////////////////////////////////////
+
+
+void setup_IR_Controll(){
+    while (!Serial)
+        ; // Wait for Serial to become available. Is optimized away for some cores.
+
+    // Just to know which program is running on my Arduino
+    Serial.println(F("START " __FILE__ " from " __DATE__ "\r\nUsing library version " VERSION_IRREMOTE));
+    Serial.print(F("Send IR signals at pin "));
+    Serial.println(IR_SEND_PIN);
+
+    /*
+     * The IR library setup. That's all!
+     */
+    IrSender.begin(); // Start with IR_SEND_PIN -which is defined in PinDefinitionsAndMore.h- as send pin and enable feedback LED at default feedback LED pin
+    disableLEDFeedback(); // Disable feedback LED at default feedback LED pin
+}
+
+
+void IR_Controll(){
+    if (Firebase.RTDB.getInt(&fbdo, "/ir_device/key0") && fbdo.dataType() == "int" && fbdo.intData() == 1){ IrSender.sendNEC(0x102, KEY17_0, 0);Firebase.RTDB.setInt(&fbdo, "/ir_device/key0" , 0);}
+    if (Firebase.RTDB.getInt(&fbdo, "/ir_device/key1") && fbdo.dataType() == "int" && fbdo.intData() == 1){ IrSender.sendNEC(0x102, KEY17_1, 0);Firebase.RTDB.setInt(&fbdo, "/ir_device/key1" , 0);}
+    if (Firebase.RTDB.getInt(&fbdo, "/ir_device/key2") && fbdo.dataType() == "int" && fbdo.intData() == 1){ IrSender.sendNEC(0x102, KEY17_2, 0);Firebase.RTDB.setInt(&fbdo, "/ir_device/key2" , 0);}
+    if (Firebase.RTDB.getInt(&fbdo, "/ir_device/key3") && fbdo.dataType() == "int" && fbdo.intData() == 1){ IrSender.sendNEC(0x102, KEY17_3, 0);Firebase.RTDB.setInt(&fbdo, "/ir_device/key3" , 0);}
+    if (Firebase.RTDB.getInt(&fbdo, "/ir_device/key4") && fbdo.dataType() == "int" && fbdo.intData() == 1){ IrSender.sendNEC(0x102, KEY17_4, 0);Firebase.RTDB.setInt(&fbdo, "/ir_device/key4" , 0);}
+    if (Firebase.RTDB.getInt(&fbdo, "/ir_device/key5") && fbdo.dataType() == "int" && fbdo.intData() == 1){ IrSender.sendNEC(0x102, KEY17_5, 0);Firebase.RTDB.setInt(&fbdo, "/ir_device/key5" , 0);}
+    if (Firebase.RTDB.getInt(&fbdo, "/ir_device/key6") && fbdo.dataType() == "int" && fbdo.intData() == 1){ IrSender.sendNEC(0x102, KEY17_6, 0);Firebase.RTDB.setInt(&fbdo, "/ir_device/key6" , 0);}
+    if (Firebase.RTDB.getInt(&fbdo, "/ir_device/key7") && fbdo.dataType() == "int" && fbdo.intData() == 1){ IrSender.sendNEC(0x102, KEY17_7, 0);Firebase.RTDB.setInt(&fbdo, "/ir_device/key7" , 0);}
+    if (Firebase.RTDB.getInt(&fbdo, "/ir_device/key8") && fbdo.dataType() == "int" && fbdo.intData() == 1){ IrSender.sendNEC(0x102, KEY17_8, 0);Firebase.RTDB.setInt(&fbdo, "/ir_device/key8" , 0);}
+    if (Firebase.RTDB.getInt(&fbdo, "/ir_device/key9") && fbdo.dataType() == "int" && fbdo.intData() == 1){ IrSender.sendNEC(0x102, KEY17_9, 0);Firebase.RTDB.setInt(&fbdo, "/ir_device/key9" , 0);}
+    if (Firebase.RTDB.getInt(&fbdo, "/ir_device/key_star") && fbdo.dataType() == "int" && fbdo.intData() == 1){ IrSender.sendNEC(0x102, KEY17_STAR, 0);Firebase.RTDB.setInt(&fbdo, "/ir_device/key_star" , 0);}
+    if (Firebase.RTDB.getInt(&fbdo, "/ir_device/key_sharp") && fbdo.dataType() == "int" && fbdo.intData() == 1){ IrSender.sendNEC(0x102, KEY17_SHARP, 0);Firebase.RTDB.setInt(&fbdo, "/ir_device/key_sharp" , 0);}
+    if (Firebase.RTDB.getInt(&fbdo, "/ir_device/key_up") && fbdo.dataType() == "int" && fbdo.intData() == 1){ IrSender.sendNEC(0x102, KEY17_UP, 0);Firebase.RTDB.setInt(&fbdo, "/ir_device/key_up" , 0);}
+    if (Firebase.RTDB.getInt(&fbdo, "/ir_device/key_down") && fbdo.dataType() == "int" && fbdo.intData() == 1){ IrSender.sendNEC(0x102, KEY17_DOWN, 0);Firebase.RTDB.setInt(&fbdo, "/ir_device/key_down" , 0);}
+    if (Firebase.RTDB.getInt(&fbdo, "/ir_device/key_left") && fbdo.dataType()  == "int" && fbdo.intData() == 1){ IrSender.sendNEC(0x102, KEY17_LEFT, 0);Firebase.RTDB.setInt(&fbdo, "/ir_device/key_left" , 0);}
+    if (Firebase.RTDB.getInt(&fbdo, "/ir_device/key_right") && fbdo.dataType() == "int" && fbdo.intData() == 1){ IrSender.sendNEC(0x102, KEY17_RIGHT, 0);Firebase.RTDB.setInt(&fbdo, "/ir_device/key_right" , 0);}
+    if (Firebase.RTDB.getInt(&fbdo, "/ir_device/key_ok") && fbdo.dataType() == "int" && fbdo.intData() == 1){ IrSender.sendNEC(0x102, KEY17_OK, 0);Firebase.RTDB.setInt(&fbdo, "/ir_device/key_ok" , 0);}
+}
+
+
+
+////////////////////////////////////////////////////////
+
 void globalTask(void *parameters) {
     while (1) {
         for (uint8_t i = 0; i < MAX_RELAY; i++) {
@@ -237,7 +320,7 @@ void setupglobalTask() {
     xTaskCreate(
         globalTask, 
         "Global Task", 
-        1024, 
+        4096, 
         NULL, 
         1,  // Lowest priority
         NULL
