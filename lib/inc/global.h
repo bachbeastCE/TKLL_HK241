@@ -10,8 +10,9 @@
 
 #define WIFI_SSID "Duy Bach"
 #define WIFI_PASSWORD "28082004"
-#define DATABASE_URL "https://test-9c8d6-default-rtdb.asia-southeast1.firebasedatabase.app/" 
-#define API_KEY "AIzaSyDq552RtmjLM8ok1NhIKufMbw3_c73sppk"
+#define DATABASE_URL "https://smartroomapp-1cad3-default-rtdb.asia-southeast1.firebasedatabase.app/" 
+#define API_KEY "AIzaSyAIMkx2XnNrD4Fy0TWyFNAi_pKKqwHMDUg"
+
 
 //DEFINE GPIO PIN
 #define SCL_Pin 22
@@ -19,7 +20,7 @@
 #define dht_signal_Pin 23
 #define mq135_analog_Pin 35
 #define fan_pin 33
-#define fire_detect_Pin 32
+#define fire_detect_Pin 15
 #define IR_SEND_PIN 4  // Ví dụ: GPIO 4
 
 #define ON 1
@@ -81,7 +82,8 @@ void update_light();
 void receive_data_from_database();
 void send_data_to_database();
 
-
+void setup_fire_dectect();
+void fire_dectect();
 
 
 

@@ -26,6 +26,10 @@ int freq = 5000;
 int resolution = 8;
 int channel= 0;
 
+//FIRE_DECTECT
+int flame_state=1;
+int tmp_flame_state=1;
+
 //Define Firebase Data object
 FirebaseData fbdo; 
 FirebaseConfig config; 
@@ -125,7 +129,14 @@ void send_data_to_database(){
             Firebase.RTDB.setInt(&fbdo, tmp, relays[i].status);
         }   
     }
+    //SEND FIRE DECTECT
+        if (flame_state == HIGH) Firebase.RTDB.setInt(&fbdo, "/Fire", 0);
+    //Serial.println("No flame dected => The fire is NOT detected");
+    else
+        Firebase.RTDB.setInt(&fbdo, "/Fire", 1);
+    //Serial.println("Flame dected => The fire is detected");
 }
+
 
 void button_controll_relay(){
     for (uint8_t i = 0; i < MAX_RELAY; i++) {
@@ -169,5 +180,15 @@ void IR_Control(){
     if (Firebase.RTDB.getInt(&fbdo, "/ir_device/key_left") && fbdo.dataType()  == "int" && fbdo.intData() == 1){ IrSender.sendNEC(0x102, KEY17_LEFT, 0);Firebase.RTDB.setInt(&fbdo, "/ir_device/key_left" , 0);}
     if (Firebase.RTDB.getInt(&fbdo, "/ir_device/key_right") && fbdo.dataType() == "int" && fbdo.intData() == 1){ IrSender.sendNEC(0x102, KEY17_RIGHT, 0);Firebase.RTDB.setInt(&fbdo, "/ir_device/key_right" , 0);}
     if (Firebase.RTDB.getInt(&fbdo, "/ir_device/key_ok") && fbdo.dataType() == "int" && fbdo.intData() == 1){ IrSender.sendNEC(0x102, KEY17_OK, 0);Firebase.RTDB.setInt(&fbdo, "/ir_device/key_ok" , 0);}
+}
+
+  
+
+void setup_fire_dectect(){
+    pinMode(fire_detect_Pin, INPUT);
+}
+
+void fire_dectect(){
+    flame_state = digitalRead(fire_detect_Pin);
 }
 

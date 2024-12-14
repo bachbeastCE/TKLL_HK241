@@ -5,6 +5,7 @@ void Task_10(void *parameters) {
     while (1) {
       // FUNTION HERE  
     getKeyInput();
+    //fire_dectect();
       // END 
     vTaskDelay(10 / portTICK_PERIOD_MS);  // Run every 10ms
   }
@@ -23,7 +24,9 @@ void setup()
   setupFAN();
   setupLCD();
   setup_IR_Control();
-  xTaskCreate(Task_10, "Task10ms", 1200, NULL, 6,NULL);
+  setup_fire_dectect();
+  setupLCD();
+  xTaskCreate(Task_10, "Task10ms", 2048, NULL, 6,NULL);
 }
 
 //uint8_t sCommand = 0x0D;
@@ -57,17 +60,18 @@ void loop() {
     previousTime5s = currentTime;
     readLight();
     update_light();
+    //displayLCD();
   }
-
-  if (currentTime - previousTime2s >= interval2s) {
-    previousTime2s = currentTime;
+// // Kiểm tra và thực hiện nhiệm vụ 2 giây một lần
+//   if (currentTime - previousTime2s >= interval2s) {
+//     previousTime2s = currentTime;
     
-  }
+//   }
   // Thực hiện hàm A nếu chưa được thực hiện hoặc đã qua 2 giây kể từ lần cuối thực hiện
   if (!receive_done || (currentTime - previousTime2s >= interval2s)) {
     previousTime2s = currentTime;  // Cập nhật thời gian thực hiện receive
     receive_data_from_database();
-    IR_Control();
+    //IR_Control();
     receive_done = true;    // Đánh dấu receive đã được thực hiện
   }
 
