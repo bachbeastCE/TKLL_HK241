@@ -168,3 +168,17 @@ void button_relay(){
 }
 
 
+
+void setupFireDetect(){
+      pinMode(fire_detect, INPUT);
+      pinMode(buzzer,OUTPUT);
+}
+
+void FireDetect(){
+    int flame_state = digitalRead(fire_detect);
+    Firebase.RTDB.setInt(&fbdo, "/Fire", !flame_state);
+    if (flame_state == HIGH)
+        digitalWrite(buzzer,LOW);
+    else
+        digitalWrite(buzzer,HIGH);
+}

@@ -21,7 +21,10 @@
 #define SDA_Pin 21
 #define dht_signal_Pin 23
 #define mq135_analog_Pin 35
-#define fan_pin 100
+#define fan_pin 33
+#define fire_detect 15
+#define buzzer 32
+
 
 #define ON 1
 #define OFF 0
@@ -38,7 +41,7 @@
 #define button3 18
 #define button4 19
 
-//Device a(relay1);
+
 
 
 //VARIABLE
@@ -61,6 +64,8 @@ float getHomeAirlevel();
 // SETUP FUNCTION
 void setupButton();
 void setupWifi();
+void setupFireDetect();
+void FireDetect();
 void air_humd_temp_update();
 void light_update();
 void setupDatabase();
@@ -69,4 +74,7 @@ void receive_db();
 void send_db();
 void light_db();
 void air_humd_temp_db();
+
+
+
 #endif
