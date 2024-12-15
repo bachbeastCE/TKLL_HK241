@@ -33,17 +33,18 @@ void light(void *parameters){
     }
 }
 
-void database(void *parameters) { 
-    while (1) {
-         // RECEIVE FROM DATABASE
-        receive_db();
-        //vTaskDelay(1000 / portTICK_PERIOD_MS);
-        // SEND TO DATABASE
-        send_db();
-        vTaskDelay(2000 / portTICK_PERIOD_MS);
-    }
+// void database(void *parameters) { 
+//     while (1) {
+//         if(count==18)air_humd_temp_db();
+//         if(count%5==0)light_db();
+//         if(count %2 == 1)receive_db();
+//         else send_db(); // SEND TO DATABASE// RECEIVE FROM DATABASE
+//         count++;
+//         if(count>=20);count=0;
+//         vTaskDelay(1000 / portTICK_PERIOD_MS);
+//     }
 
-}
+// }
 
 void setup()
 {
@@ -53,18 +54,25 @@ void setup()
   setupButton();
   setupDatabase();
 
-  xTaskCreate( air_humd_temp,"air_humd_temp update", 8192, NULL, 10,NULL);
+  xTaskCreate( air_humd_temp,"air_humd_temp update",4096, NULL, 1,NULL);
   delay(100);
-  xTaskCreate( light,"light update", 8192, NULL, 9,NULL);
+  xTaskCreate( light,"light update", 2048, NULL, 2,NULL);
   delay(100);
-  xTaskCreate(readButtonTask, "Read Button", 1024, NULL, 3, NULL);
-  xTaskCreate(globalTask,"Global Task", 1024, NULL, 1, NULL);
-  //xTaskCreate(database,"Database",8192, NULL,2, NULL );
+  xTaskCreate(readButtonTask, "Read Button", 1024, NULL, 5, NULL);
+  delay(100);
+  xTaskCreate(globalTask,"Global Task", 1024, NULL, 10, NULL);
 }
 
 void loop()
 {
-       
+    // if(count==0)air_humd_temp_db();
+    // if(count%5==0)light_db();
+    // if(count %2 == 1)receive_db();
+    // else send_db(); // SEND TO DATABASE// RECEIVE FROM DATABASE
+    // count++;
+    // if(count>=20);count=0;
+    displayLCD();
+    delay(1000);
 }
 
 

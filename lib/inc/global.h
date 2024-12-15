@@ -14,8 +14,8 @@
 
 #define WIFI_SSID "Duy Bach"
 #define WIFI_PASSWORD "28082004"
-#define DATABASE_URL "https://test-9c8d6-default-rtdb.asia-southeast1.firebasedatabase.app/" 
-#define API_KEY "AIzaSyDq552RtmjLM8ok1NhIKufMbw3_c73sppk"
+#define DATABASE_URL "https://smartroomapp-1cad3-default-rtdb.asia-southeast1.firebasedatabase.app/" 
+#define API_KEY "AIzaSyAIMkx2XnNrD4Fy0TWyFNAi_pKKqwHMDUg"
 //DEFINE GPIO PIN
 #define SCL_Pin 22
 #define SDA_Pin 21
@@ -49,7 +49,7 @@ extern float homeHumidity;
 extern int homeLightlevel;
 extern int homeAirlevel;
 extern uint8_t relayStatus[MAX_RELAY];
-
+extern int count;
 
 // RETURN FUNCTION
 float getHomeTemperature();
@@ -67,5 +67,6 @@ void setupDatabase();
 void button_relay();
 void receive_db();
 void send_db();
-
+void light_db();
+void air_humd_temp_db();
 #endif

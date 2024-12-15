@@ -10,7 +10,7 @@ float homeTemperature = 0;
 float homeHumidity = 0;
 int homeLightlevel = 0;
 int homeAirlevel = 0;
-int count=15;
+int count=0;
 //RELAY VARIABLE
 Relay relays[MAX_RELAY]={Relay(relay1),Relay(relay2),
                             Relay(relay3),Relay(relay4)};
@@ -65,21 +65,28 @@ void setupWifi(){
 
 void air_humd_temp_update(){
     homeTemperature = getTemperature();
-    Firebase.RTDB.setFloat(&fbdo, "Home/homeTemperature", homeHumidity);
     homeHumidity = getHumidity() ;
-    Firebase.RTDB.setFloat(&fbdo, "Home/homeHumidity", homeHumidity);
-    homeAirlevel = (int)getAirlevel() ;
-    Firebase.RTDB.setInt(&fbdo, "Home/homeAirlevel", homeAirlevel);
+    homeAirlevel = getAirlevel();
+    
 }
 
 void light_update(){
-    homeLightlevel = (int)getLightlevel();
-    Firebase.RTDB.setInt(&fbdo, "Home/homeLightlevel", homeLightlevel);
+    homeLightlevel = getLightlevel();
+}
+
+void air_humd_temp_db(){
+    Firebase.RTDB.setFloat(&fbdo, "Home/homeTemperature", homeTemperature);
+    Firebase.RTDB.setFloat(&fbdo, "Home/homeHumidity", homeHumidity);
+    Firebase.RTDB.setInt(&fbdo, "Home/homeAirlevel", homeAirlevel);
 }
 
 
+void light_db(){
+    Firebase.RTDB.setInt(&fbdo, "Home/homeLightlevel", homeLightlevel);
+}
 
 void receive_db(){
+
         for (int i = 0; i < MAX_RELAY; i++) {
             char tmp[32];
             snprintf(tmp, sizeof(tmp), "/Relay/Relay%d", i + 1);
@@ -90,7 +97,7 @@ void receive_db(){
                     (tmp1 == 0) ? (relays[i].turnRelayOFF()) : (relays[i].turnRelayON());
                 }
             }
-        } 
+        }
 }
 
 void send_db(){
