@@ -37,3 +37,26 @@ void Relay::toolgeRelay()
    this->changeflag = 1;
 }
 
+Fan::Fan(uint8_t GPIO) : Relay(GPIO)
+{
+    this->channel = 0;
+    this->speed = 0;
+    this->freq = 5000;
+}
+
+void Fan::setSpeed(int speed)
+{
+    this->speed = constrain(speed, 0, 100); // Limit speed to 0-100%
+    ledcWrite(this->channel, (this->speed * 255) / 100); // Map to 8-bit value
+}
+
+void Fan::speedControllerFan(float temperature)
+{
+    if (temperature < 25.0) {
+        setSpeed(0); // Fan off
+    } else if (temperature >= 25.0 && temperature < 30.0) {
+        setSpeed(50); // Fan at 50% speed
+    } else {
+        setSpeed(100); // Fan at 100% speed
+    }
+}

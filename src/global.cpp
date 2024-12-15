@@ -17,14 +17,14 @@ Relay relays[MAX_RELAY]={Relay(relay1),Relay(relay2),
 uint8_t relayStatusFlag[MAX_RELAY]= {0,0,0,0};
 uint8_t relayStatus[MAX_RELAY]= {0,0,0,0};
 
+Fan fan(0);
+
 //PWM VARIABLE
-const int freq = 5000;
-const int resolution = 8;
-const int fanChanel= 0;
+
 
 void setupFAN(){
-    ledcSetup(fanChanel,freq,resolution);
-    ledcAttachPin(fan_pin,fanChanel);
+    ledcSetup(fan.channel,fan.freq,8);
+    ledcAttachPin(fan_pin,fan.channel);
 }
 
 //Define Firebase Data object
@@ -115,6 +115,8 @@ void send_db(){
 
 
 
+
+
 void setupDatabase() { 
 WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   Serial.print("Connecting to Wi-Fi");
@@ -181,4 +183,15 @@ void FireDetect(){
         digitalWrite(buzzer,LOW);
     else
         digitalWrite(buzzer,HIGH);
+}
+
+void controll_fan(){
+    if(Firebase.RTDB.getString(&fbdo, "Fan/mode")){
+        if(fbdo.stringData() == "Manual"){
+            Firebase.RTDB.getInt(&fbdo, "Fan/speed");
+            fan.setSpeed(fbdo.intData());
+        }
+    }
+    else 
+     fan.speedControllerFan(homeTemperature);
 }

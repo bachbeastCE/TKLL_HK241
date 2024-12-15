@@ -77,6 +77,7 @@ void loop()
     if(count==0)air_humd_temp_db();
     if(count%5==0)light_db();
     receive_db();
+    controll_fan();
     send_db(); // SEND TO DATABASE// RECEIVE FROM DATABASE
     count++;
     if(count>=20);count=0;
