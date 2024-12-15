@@ -75,7 +75,7 @@ void send_db();
 void light_db();
 void air_humd_temp_db();
 void controll_fan();
-
+void setupFAN();
 
 
 #endif

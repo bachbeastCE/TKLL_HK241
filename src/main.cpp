@@ -61,6 +61,7 @@ void setup()
   setupButton();
   setupDatabase();
     setupFireDetect();
+    setupFAN();
 
   xTaskCreate( air_humd_temp,"air_humd_temp update",4096, NULL, 1,NULL);
   delay(100);
@@ -77,7 +78,7 @@ void loop()
     if(count==0)air_humd_temp_db();
     if(count%5==0)light_db();
     receive_db();
-    controll_fan();
+    //controll_fan();
     send_db(); // SEND TO DATABASE// RECEIVE FROM DATABASE
     count++;
     if(count>=20);count=0;

@@ -21,10 +21,14 @@ Fan fan(0);
 
 //PWM VARIABLE
 
+int speed = 100;
+int freq = 5000;
+int resolution = 8;
+int channel= 0;
 
 void setupFAN(){
-    ledcSetup(fan.channel,fan.freq,8);
-    ledcAttachPin(fan_pin,fan.channel);
+    ledcSetup(channel,freq,8);
+    ledcAttachPin(fan_pin,channel);
 }
 
 //Define Firebase Data object
@@ -98,6 +102,17 @@ void receive_db(){
                 }
             }
         }
+            //RECIVE FAN SPEED DATA
+        // if(Firebase.RTDB.getString(&fbdo, "/Fan/mode") && fbdo.dataType() == "String"){
+        //     if(fbdo.stringData() == "Manual")
+        // }
+
+    if (Firebase.RTDB.getInt(&fbdo, "/Fan/speed") && fbdo.dataType() == "int") {
+        if (fbdo.intData() != speed) {
+            speed = fbdo.intData();
+            ledcWrite(channel,(speed * 255) /100);
+        }
+    }
 }
 
 void send_db(){
