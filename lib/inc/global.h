@@ -11,6 +11,7 @@
 #include <lcd.h>
 #include <string.h>
 #include <relay.h>
+#include <IRremote.hpp>
 
 #define WIFI_SSID "Duy Bach"
 #define WIFI_PASSWORD "28082004"
@@ -24,6 +25,7 @@
 #define fan_pin 33
 #define fire_detect 15
 #define buzzer 32
+#define IR_SEND_PIN 4  
 
 
 #define ON 1
@@ -41,6 +43,23 @@
 #define button3 18
 #define button4 19
 
+#define KEY17_1     69  //  1
+#define KEY17_2     70  //  2
+#define KEY17_3     71  //  3
+#define KEY17_4     68  //  4
+#define KEY17_5     64  //  5
+#define KEY17_6     67  //  6
+#define KEY17_7     7   //  7
+#define KEY17_8     21  //  8
+#define KEY17_9     9   //  9
+#define KEY17_STAR  22  //  *
+#define KEY17_0     25  //  0
+#define KEY17_SHARP 13  //  #
+#define KEY17_UP    24  //  UP
+#define KEY17_LEFT  8   //  LEFT
+#define KEY17_OK    28  //  OK
+#define KEY17_RIGHT 90  //  RIGHT
+#define KEY17_DOWN  82  //  DOWN
 
 
 
@@ -74,7 +93,6 @@ void receive_db();
 void send_db();
 void light_db();
 void air_humd_temp_db();
-void controll_fan();
 void setupFAN();
 
 

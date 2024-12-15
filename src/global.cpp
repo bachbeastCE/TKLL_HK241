@@ -212,3 +212,84 @@ void FireDetect(){
     else
         digitalWrite(buzzer,HIGH);
 }
+
+void setup_IR_Controll(){
+    while (!Serial)
+        ; // Wait for Serial to become available. Is optimized away for some cores.
+
+    // Just to know which program is running on my Arduino
+    Serial.println(F("START " __FILE__ " from " __DATE__ "\r\nUsing library version " VERSION_IRREMOTE));
+    Serial.print(F("Send IR signals at pin "));
+    Serial.println(IR_SEND_PIN);
+
+    /*
+     * The IR library setup. That's all!
+     */
+    IrSender.begin(); // Start with IR_SEND_PIN -which is defined in PinDefinitionsAndMore.h- as send pin and enable feedback LED at default feedback LED pin
+    disableLEDFeedback(); // Disable feedback LED at default feedback LED pin
+}
+
+void IR_Control(){
+        if (Firebase.RTDB.getInt(&fbdo, "/ir_device/key") && fbdo.dataType() == "int"){
+        int key = fbdo.intData();
+        if(key != 0){
+            Firebase.RTDB.setInt(&fbdo, "/ir_device/key" , 0);
+            switch (key)
+            {
+            case 69:
+                IrSender.sendNEC(0x102, KEY17_1, 0);;
+                break;
+            case 70:
+                IrSender.sendNEC(0x102, KEY17_2, 0);
+                break;
+            case 71:
+                IrSender.sendNEC(0x102, KEY17_3, 0);
+                break;
+            case 68:
+                IrSender.sendNEC(0x102, KEY17_4, 0);
+                break;
+            case 64:
+                IrSender.sendNEC(0x102, KEY17_5, 0);
+                break;                                        
+            case 67:
+                IrSender.sendNEC(0x102, KEY17_6, 0);
+                break;
+            case 7:
+                IrSender.sendNEC(0x102, KEY17_7, 0);
+                break;
+            case 21:
+                IrSender.sendNEC(0x102, KEY17_8, 0);
+                break;
+            case 9:
+                IrSender.sendNEC(0x102, KEY17_9, 0);
+                break;
+            case 22:
+                IrSender.sendNEC(0x102, KEY17_STAR, 0);
+                break;
+            case 25:
+                IrSender.sendNEC(0x102, KEY17_0, 0);
+                break;
+            case 13:
+                IrSender.sendNEC(0x102, KEY17_SHARP, 0);
+                break;
+            case 24:
+                IrSender.sendNEC(0x102, KEY17_UP, 0);
+                break;
+            case 8:
+                IrSender.sendNEC(0x102, KEY17_LEFT, 0);
+                break;
+            case 28:
+                IrSender.sendNEC(0x102, KEY17_OK, 0);
+                break;
+            case 90:
+                IrSender.sendNEC(0x102, KEY17_RIGHT, 0);
+                break;
+            case 82:
+                IrSender.sendNEC(0x102, KEY17_DOWN, 0);
+                break;                              
+            default:
+                break;  
+            }
+        }
+    }
+}
