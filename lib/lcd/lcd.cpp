@@ -35,16 +35,19 @@ void displayLCD(){
   }
   case HOME:{
     //if( tmp_temp != homeTemperature || tmp_humid !=homeHumidity){
-      lcd.clear();
+    lcd.clear();
+      tmp_temp= homeTemperature;
+      tmp_humid= homeHumidity;
+      tmp_lightlevel= homeLightlevel;
+      tmp_airlevel= homeAirlevel;
       lcd.setCursor(0, 0);
-      lcd.print("Temperature: "); lcd.print(homeTemperature);lcd.print("oC");
+      lcd.print("Temperature: "); lcd.print(tmp_temp);lcd.print("oC");
       lcd.setCursor(0, 1);
-      lcd.print("Humidity: "); lcd.print(homeHumidity);lcd.print("%");
+      lcd.print("Humidity: "); lcd.print(tmp_humid);lcd.print("%");
       lcd.setCursor(0, 2);
-      lcd.print("Light: "); lcd.print(homeLightlevel);lcd.print(" lux");
+      lcd.print("Light: "); lcd.print(tmp_lightlevel);lcd.print(" lux");
       lcd.setCursor(0, 3);
-      lcd.print("Air: "); lcd.print(homeAirlevel);lcd.print(" ppm");
-      
+      lcd.print("Air: "); lcd.print(tmp_airlevel);lcd.print(" ppm");
     //}
         break;
   }
