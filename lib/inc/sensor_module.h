@@ -17,25 +17,13 @@
 //INCLUDE DATA VARIABLE
 extern float temp;
 extern float humidity;
-extern float lightlevel;
-extern float airlevel;
+extern int lightlevel;
+extern int airlevel;
 
 // IMPLEMENT FOR TEMPERATURE & HUMIDITY SENSOR
-void setupDHT();
-void DHTTask(void *pvParameters);
 float getTemperature();
 float getHumidity();
+int getLightlevel();
+int getAirlevel();
 
-// IMPLEMENT FOR LIGHT SENSOR
-void setupBH1750();
-void BH1750Task(void *pvParameters);
-float getLightlevel();
-
-// IMPLEMENT FOR AIR SENSOR
-void setupMQ135();
-void MQ135Task(void *pvParameters);
-float getAirlevel();
-
-
-// SET TASK FOR GET DATA SENSOR
 #endif

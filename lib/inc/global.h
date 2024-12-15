@@ -46,8 +46,8 @@
 
 extern float homeTemperature;
 extern float homeHumidity;
-extern float homeLightlevel;
-extern float homeAirlevel;
+extern int homeLightlevel;
+extern int homeAirlevel;
 extern uint8_t relayStatus[MAX_RELAY];
 
 
@@ -61,32 +61,11 @@ float getHomeAirlevel();
 // SETUP FUNCTION
 void setupButton();
 void setupWifi();
-void homeUpdateDataTask(void *parameters);
-void setupHomeUpdateData();
-void databaseTask(void *parameters);
+void air_humd_temp_update();
+void light_update();
 void setupDatabase();
-void readButtonTask(void *parameters);
-void setupReadButton();
-void updateRelayTask(void *parameters);
-void setupUpdateRelay();
-
-void globalTask(void *parameters);
-void setupglobalTask();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void button_relay();
+void receive_db();
+void send_db();
 
 #endif
