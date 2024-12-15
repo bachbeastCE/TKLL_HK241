@@ -20,18 +20,4 @@ public:
    void toolgeRelay();
 };
 
-class Fan : public Relay
-{
-public:
-   int speed;
-   int channel;
-   int freq;
-    Fan(uint8_t GPIO);
-    ~Fan(){};
-
-    void setSpeed(int speed); // Set the speed of the fan
-    void speedControllerFan(float temperature); // Adjust fan speed based on temperature
-};
-
-
 #endif

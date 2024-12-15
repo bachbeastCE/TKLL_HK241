@@ -17,8 +17,6 @@ Relay relays[MAX_RELAY]={Relay(relay1),Relay(relay2),
 uint8_t relayStatusFlag[MAX_RELAY]= {0,0,0,0};
 uint8_t relayStatus[MAX_RELAY]= {0,0,0,0};
 
-Fan fan(0);
-
 //PWM VARIABLE
 
 int speed = 100;
@@ -103,17 +101,32 @@ void receive_db(){
             }
         }
             //RECIVE FAN SPEED DATA
-        // if(Firebase.RTDB.getString(&fbdo, "/Fan/mode") && fbdo.dataType() == "String"){
-        //     if(fbdo.stringData() == "Manual")
-        // }
-
-    if (Firebase.RTDB.getInt(&fbdo, "/Fan/speed") && fbdo.dataType() == "int") {
-        if (fbdo.intData() != speed) {
-            speed = fbdo.intData();
-            ledcWrite(channel,(speed * 255) /100);
-        }
-    }
+        Firebase.RTDB.getString(&fbdo, "/Fan/mode");
+        String fanMode = fbdo.stringData();
+        if(fanMode == "Manual"){
+            if (Firebase.RTDB.getInt(&fbdo, "/Fan/speed") && fbdo.dataType() == "int") {
+                    if (fbdo.intData() != speed) {
+                        speed = fbdo.intData();
+                        ledcWrite(channel,(speed * 255) /100);
+                    }
+                }
+            }
+        else{
+                if (homeTemperature < 25.0) {
+                    ledcWrite(channel,(0 * 255) /100); // Fan off
+                } else if (homeTemperature >= 25.0 && homeTemperature < 27.0) {
+                    ledcWrite(channel,(25 * 255) /100); // Fan at 50% speed
+                } else if (homeTemperature >= 27.0 && homeTemperature < 29.0) {
+                ledcWrite(channel,(50 * 255) /100); // Fan at 50% speed
+                } else if (homeTemperature >= 29.0 && homeTemperature < 31.0) {
+                    ledcWrite(channel,(75 * 255) /100); // Fan at 50% speed
+                } else {
+                    ledcWrite(channel,(100 * 255) /100); // Fan at 100% speed
+                }
+            }
 }
+
+            
 
 void send_db(){
         for (uint8_t i = 0; i < MAX_RELAY; i++) {
@@ -198,15 +211,4 @@ void FireDetect(){
         digitalWrite(buzzer,LOW);
     else
         digitalWrite(buzzer,HIGH);
-}
-
-void controll_fan(){
-    if(Firebase.RTDB.getString(&fbdo, "Fan/mode")){
-        if(fbdo.stringData() == "Manual"){
-            Firebase.RTDB.getInt(&fbdo, "Fan/speed");
-            fan.setSpeed(fbdo.intData());
-        }
-    }
-    else 
-     fan.speedControllerFan(homeTemperature);
 }
