@@ -11,7 +11,7 @@
 #include <lcd.h>
 #include <string.h>
 #include <relay.h>
-#include <IRremote.hpp>
+
 
 #define WIFI_SSID "Duy Bach"
 #define WIFI_PASSWORD "28082004"
@@ -94,6 +94,7 @@ void send_db();
 void light_db();
 void air_humd_temp_db();
 void setupFAN();
-
+void setup_IR_Controll();
+void IR_Control();
 
 #endif

@@ -3,7 +3,7 @@
 #include <WiFi.h>
 #include <addons/TokenHelper.h>
 #include <addons/RTDBHelper.h>
-
+#include <IRremote.hpp>
 
 //READ SENSOR VARIABLE 
 float homeTemperature = 0;
@@ -22,7 +22,7 @@ uint8_t relayStatus[MAX_RELAY]= {0,0,0,0};
 int speed = 100;
 int freq = 5000;
 int resolution = 8;
-int channel= 0;
+int channel= 1;
 
 void setupFAN(){
     ledcSetup(channel,freq,8);
@@ -100,6 +100,7 @@ void receive_db(){
                 }
             }
         }
+        IR_Control();
             //RECIVE FAN SPEED DATA
         Firebase.RTDB.getString(&fbdo, "/Fan/mode");
         String fanMode = fbdo.stringData();
@@ -206,11 +207,15 @@ void setupFireDetect(){
 
 void FireDetect(){
     int flame_state = digitalRead(fire_detect);
-    Firebase.RTDB.setInt(&fbdo, "/Fire", !flame_state);
-    if (flame_state == HIGH)
+    if (flame_state == HIGH){
         digitalWrite(buzzer,LOW);
-    else
+        Firebase.RTDB.setInt(&fbdo, "/Fire", 0);
+    }     
+    else{
         digitalWrite(buzzer,HIGH);
+        Firebase.RTDB.setInt(&fbdo, "/Fire", 1);
+    }
+        
 }
 
 void setup_IR_Controll(){

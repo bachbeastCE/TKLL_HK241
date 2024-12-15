@@ -12,6 +12,13 @@ void globalTask(void *parameters) {
     } 
 }
 
+void IrTask(void *parameters) {
+    while (1) {
+        IR_Control();
+        vTaskDelay(500 / portTICK_PERIOD_MS);  // Run every 100ms
+    } 
+}
+
 void readButtonTask(void *parameters) { 
     while (1) {
         getKeyInput();  // Read and debounce button inputs
@@ -62,6 +69,7 @@ void setup()
   setupDatabase();
     setupFireDetect();
     setupFAN();
+    setup_IR_Controll();
 
   xTaskCreate( air_humd_temp,"air_humd_temp update",4096, NULL, 1,NULL);
   delay(100);
@@ -69,8 +77,11 @@ void setup()
   delay(100);
   xTaskCreate(readButtonTask, "Read Button", 1024, NULL, 5, NULL);
   delay(100);
+  //xTaskCreate(IrTask, "Ir Control", 8192, NULL, 7, NULL);
+  delay(100);
   xTaskCreate(globalTask,"Global Task", 1024, NULL, 10, NULL);
-xTaskCreate(lcd,"Global Task", 2048, NULL, 4, NULL);
+  delay(100);
+  xTaskCreate(lcd,"Global Task", 2048, NULL, 4, NULL);
 }
 
 void loop()
