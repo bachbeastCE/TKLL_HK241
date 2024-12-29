@@ -13,8 +13,8 @@
 #include <relay.h>
 
 
-#define WIFI_SSID "Duy Bach"
-#define WIFI_PASSWORD "28082004"
+#define WIFI_SSID "M34"
+#define WIFI_PASSWORD "quocan2004"
 #define DATABASE_URL "https://smartroomapp-1cad3-default-rtdb.asia-southeast1.firebasedatabase.app/" 
 #define API_KEY "AIzaSyAIMkx2XnNrD4Fy0TWyFNAi_pKKqwHMDUg"
 //DEFINE GPIO PIN

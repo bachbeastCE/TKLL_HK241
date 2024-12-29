@@ -11,6 +11,8 @@ float homeHumidity = 0;
 int homeLightlevel = 0;
 int homeAirlevel = 0;
 int count=0;
+int manual_flag=1;
+
 //RELAY VARIABLE
 Relay relays[MAX_RELAY]={Relay(relay1),Relay(relay2),
                             Relay(relay3),Relay(relay4)};
@@ -100,7 +102,6 @@ void receive_db(){
                 }
             }
         }
-        IR_Control();
             //RECIVE FAN SPEED DATA
         Firebase.RTDB.getString(&fbdo, "/Fan/mode");
         String fanMode = fbdo.stringData();
@@ -137,6 +138,10 @@ void send_db(){
                 snprintf(tmp, sizeof(tmp), "/Relay/Relay%d", i + 1);
                 Firebase.RTDB.setInt(&fbdo, tmp, relays[i].status);
             }   
+        }
+        if(manual_flag==1){
+            Firebase.RTDB.setString(&fbdo, "Relay/Mode", "Manual");
+            manual_flag=0;
         }
 }
 
@@ -193,6 +198,7 @@ void setupButton()
 void button_relay(){
     for (uint8_t i = 0; i < MAX_RELAY; i++) {
             if (isButtonPressed(i)) {
+                manual_flag=1;
                 relays[i].toolgeRelay();  // Toggle relay state
         }
     }
@@ -238,6 +244,7 @@ void IR_Control(){
         if (Firebase.RTDB.getInt(&fbdo, "/ir_device/key") && fbdo.dataType() == "int"){
         int key = fbdo.intData();
         if(key != 0){
+            delay(100);
             Firebase.RTDB.setInt(&fbdo, "/ir_device/key" , 0);
             switch (key)
             {

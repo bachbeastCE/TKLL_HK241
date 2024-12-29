@@ -12,12 +12,12 @@ void globalTask(void *parameters) {
     } 
 }
 
-void IrTask(void *parameters) {
-    while (1) {
-        IR_Control();
-        vTaskDelay(500 / portTICK_PERIOD_MS);  // Run every 100ms
-    } 
-}
+// void IrTask(void *parameters) {
+//     while (1) {
+//         IR_Control();
+//         vTaskDelay(500 / portTICK_PERIOD_MS);  // Run every 100ms
+//     } 
+// }
 
 void readButtonTask(void *parameters) { 
     while (1) {
@@ -89,12 +89,13 @@ void loop()
     if(count==0)air_humd_temp_db();
     if(count%5==0)light_db();
     receive_db();
+    delay(1000);
     //controll_fan();
     send_db(); // SEND TO DATABASE// RECEIVE FROM DATABASE
     count++;
     if(count>=20);count=0;
     FireDetect();
-    delay(1000);
+    IR_Control();
 }
 
 
