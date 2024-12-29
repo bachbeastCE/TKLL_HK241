@@ -117,11 +117,11 @@ void receive_db(){
                 if (homeTemperature < 25.0) {
                     ledcWrite(channel,(0 * 255) /100); // Fan off
                 } else if (homeTemperature >= 25.0 && homeTemperature < 27.0) {
-                    ledcWrite(channel,(25 * 255) /100); // Fan at 50% speed
+                    ledcWrite(channel,(25 * 255) /100); // Fan at 25% speed
                 } else if (homeTemperature >= 27.0 && homeTemperature < 29.0) {
                 ledcWrite(channel,(50 * 255) /100); // Fan at 50% speed
                 } else if (homeTemperature >= 29.0 && homeTemperature < 31.0) {
-                    ledcWrite(channel,(75 * 255) /100); // Fan at 50% speed
+                    ledcWrite(channel,(75 * 255) /100); // Fan at 75% speed
                 } else {
                     ledcWrite(channel,(100 * 255) /100); // Fan at 100% speed
                 }
