@@ -12,12 +12,12 @@ void globalTask(void *parameters) {
     } 
 }
 
-// void IrTask(void *parameters) {
-//     while (1) {
-//         IR_Control();
-//         vTaskDelay(500 / portTICK_PERIOD_MS);  // Run every 100ms
-//     } 
-// }
+void IrTask(void *parameters) {
+    while (1) {
+        FireDetect();
+        vTaskDelay(500 / portTICK_PERIOD_MS);  // Run every 500ms
+    } 
+}
 
 void readButtonTask(void *parameters) { 
     while (1) {
@@ -77,7 +77,7 @@ void setup()
   delay(100);
   xTaskCreate(readButtonTask, "Read Button", 1024, NULL, 5, NULL);
   delay(100);
-  //xTaskCreate(IrTask, "Ir Control", 8192, NULL, 7, NULL);
+  //xTaskCreate(IrTask, "Ir Control", 4096, NULL, 7, NULL);
   delay(100);
   xTaskCreate(globalTask,"Global Task", 1024, NULL, 10, NULL);
   delay(100);
@@ -92,9 +92,9 @@ void loop()
     delay(1000);
     //controll_fan();
     send_db(); // SEND TO DATABASE// RECEIVE FROM DATABASE
+    FireDetect();
     count++;
     if(count>=20);count=0;
-    FireDetect();
     IR_Control();
 }
 

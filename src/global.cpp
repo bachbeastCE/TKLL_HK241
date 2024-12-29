@@ -215,10 +215,12 @@ void FireDetect(){
     int flame_state = digitalRead(fire_detect);
     if (flame_state == HIGH){
         digitalWrite(buzzer,LOW);
+        Serial.println("ko chay");
         Firebase.RTDB.setInt(&fbdo, "/Fire", 0);
     }     
     else{
         digitalWrite(buzzer,HIGH);
+        Serial.println("chay");
         Firebase.RTDB.setInt(&fbdo, "/Fire", 1);
     }
         
